@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Observatoire IoT · ESP32</title>
+<style>
+:root{color-scheme:light;--bg:#f2f5f7;--card:#fff;--ink:#172d3b;--muted:#526775;--line:#d9e3e9;--blue:#126b91;--teal:#087f71;--green:#187044;--green-bg:#e5f5ec;--orange:#955100;--orange-bg:#fff0d9;--red:#b02d37;--red-bg:#ffebed;--shadow:0 6px 24px #15304006}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#0d1922;--card:#142530;--ink:#e5f0f5;--muted:#a9bdc9;--line:#304853;--blue:#66c4ed;--teal:#63dcc2;--green:#8be0af;--green-bg:#173d30;--orange:#ffce85;--orange-bg:#44321c;--red:#ffa4ab;--red-bg:#49252f;--shadow:none}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button{font:inherit}button:focus-visible{outline:3px solid var(--blue);outline-offset:4px}button:disabled{cursor:wait;opacity:.6}main{max-width:1180px;margin:auto;padding:42px 30px 24px}.topline,.heading,.section-head,.metric-foot,.led-row,.footer{display:flex;align-items:center;justify-content:space-between;gap:18px}.eyebrow{font-size:11px;font-weight:750;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}.brand{display:flex;align-items:center;gap:10px}.brand-icon{width:30px;height:30px;background:var(--ink);color:var(--card);display:grid;place-items:center;border-radius:9px;font-size:18px}.project-tag{color:var(--muted);font-size:12px}.heading{margin:30px 0 28px;align-items:flex-start}h1{font-size:clamp(28px,4vw,38px);letter-spacing:-.045em;line-height:1.2;margin:0 0 9px}p{margin:0}.subtitle{color:var(--muted);font-size:14px}.connection{text-align:right;max-width:330px;font-size:12px}.badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:750;letter-spacing:.05em;border-radius:30px;padding:6px 11px;white-space:nowrap}.badge::before{content:"";width:6px;height:6px;border-radius:100%;background:currentColor}.neutral{color:var(--muted);background:var(--bg)}.low{color:var(--green);background:var(--green-bg)}.medium{color:var(--orange);background:var(--orange-bg)}.high{color:var(--red);background:var(--red-bg)}#connectionMessage{margin-top:7px;color:var(--muted);overflow-wrap:anywhere}.metrics{display:grid;grid-template-columns:1fr 1fr .9fr;gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:23px}.metric-label{font-size:14px;font-weight:650;display:flex;align-items:center;gap:10px}.symbol{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:var(--bg);color:var(--blue);font-size:18px}.reading{font-size:52px;font-weight:650;letter-spacing:-.055em;line-height:1.25;margin:18px 0 15px;font-variant-numeric:tabular-nums}.unit{font-size:23px;color:var(--muted);font-weight:400;letter-spacing:0;margin-left:5px}.metric-foot{font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:13px;gap:5px}.alert-card{background:var(--ink);color:var(--card)}@media(prefers-color-scheme:dark){.alert-card{background:#1b3949;color:var(--ink)}}.alert-card h2{font-size:14px;font-weight:600;margin:0 0 22px}.alert-card .badge{font-size:15px;padding:7px 14px}.alert-description{margin-top:18px;font-size:12px;line-height:1.7;opacity:.85}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;margin-top:20px}.section-head{align-items:flex-start}h2{font-size:16px;letter-spacing:-.02em;margin:0 0 4px}.small{font-size:12px;color:var(--muted)}.live-label{color:var(--teal);font-size:11px;white-space:nowrap}.legend{display:flex;gap:18px;margin:21px 0 10px;font-size:11px;color:var(--muted)}.key{display:inline-block;width:15px;height:3px;border-radius:3px;background:var(--blue);vertical-align:middle;margin-right:6px}.key.humidity{background:var(--teal)}.chart-wrap{height:234px;position:relative}canvas{width:100%;height:100%;display:block}#chartEmpty{position:absolute;inset:30px 0;display:grid;place-items:center;text-align:center;font-size:13px;color:var(--muted);pointer-events:none}#chartEmpty[hidden]{display:none}.chart-caption{font-size:10px;color:var(--muted);margin-top:8px}.led-row{margin:25px 0 20px}.bulb{height:56px;width:56px;display:grid;place-items:center;border-radius:50%;background:var(--bg);color:var(--muted);border:1px solid var(--line);font-size:26px}.bulb.on{color:var(--orange);background:var(--orange-bg);border-color:var(--orange)}.led-state{text-align:right;font-size:23px;font-weight:700}.led-state span{display:block;font-size:11px;font-weight:400;color:var(--muted)}#ledToggle{width:100%;border:0;border-radius:10px;background:var(--ink);color:var(--card);padding:12px;font-weight:650;font-size:13px;cursor:pointer}@media(prefers-color-scheme:dark){#ledToggle{background:#c5e7f8;color:#132630}}#ledFeedback{min-height:42px;font-size:11px;color:var(--muted);margin-top:11px}.separator{border:0;border-top:1px solid var(--line);margin:15px 0}.device-meta{display:grid;grid-template-columns:1fr auto;gap:7px;font-size:11px;color:var(--muted)}.device-meta strong{color:var(--ink);font-weight:550}.watchdog{display:flex;align-items:flex-start;gap:13px;padding:18px 21px;margin-top:20px;border:1px solid var(--line);border-radius:13px;background:var(--card)}.watch-icon{font-size:18px;color:var(--teal)}.watchdog h2{font-size:13px;margin:0 0 3px}.watchdog p{font-size:12px;color:var(--muted)}.watchdog.warning{border-color:var(--orange);background:var(--orange-bg)}.watchdog.warning .watch-icon{color:var(--orange)}.footer{border-top:1px solid var(--line);margin-top:28px;padding-top:16px;font-size:10px;color:var(--muted)}.footer span:last-child{text-align:right}
+@media(max-width:850px){.workspace{grid-template-columns:minmax(0,1fr) 260px}.card{padding:18px}.reading{font-size:43px}.metrics{gap:12px}}
+@media(max-width:670px){main{padding:24px 16px}.project-tag{font-size:10px}.heading{display:block;margin:26px 0 20px}.connection{text-align:left;max-width:none;margin-top:16px}.metrics{grid-template-columns:1fr 1fr}.alert-card{grid-column:1/-1;display:flex;align-items:center;gap:16px;flex-wrap:wrap}.alert-card h2{margin:0}.alert-description{margin:0;width:100%}.workspace{grid-template-columns:1fr}.reading{font-size:41px}.metric-foot{display:block}.metric-foot time{display:block}.section-head{gap:8px}.chart-wrap{height:220px}.footer{align-items:flex-start}.metric-label{font-size:12px}.symbol{width:24px;height:24px}.unit{font-size:18px}.watchdog{padding:16px}.legend{gap:12px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+@media print{main{padding:10px;max-width:none}body{background:white}button{display:none}.card,.watchdog{break-inside:avoid}.footer{margin-top:15px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div class="topline"><div class="brand"><span class="brand-icon" aria-hidden="true">⌁</span><span class="eyebrow">Observatoire IoT</span></div><span class="project-tag">PROJET UNIVERSITAIRE · ESP32</span></div>
+ <div class="heading"><div><h1>L’environnement, en direct.</h1><p class="subtitle">Transactions &amp; paiement en ligne · Supervision ESP32 / Wokwi</p></div>
+ <div class="connection" role="status"><span id="connectionBadge" class="badge neutral">CONNEXION EN COURS</span><p id="connectionMessage">Première lecture de Firebase…</p></div></div>
+</header>
+<section class="metrics" aria-label="Mesures actuelles">
+ <article class="card"><div class="metric-label"><span class="symbol" aria-hidden="true">°</span>Température</div><p class="reading"><span id="temperature">—</span><span class="unit">°C</span></p><div class="metric-foot"><span>Dernière mesure reçue</span><time id="temperatureTime">—</time></div></article>
+ <article class="card"><div class="metric-label"><span class="symbol" aria-hidden="true">◒</span>Humidité</div><p class="reading"><span id="humidity">—</span><span class="unit">%</span></p><div class="metric-foot"><span>Dernière mesure reçue</span><time id="humidityTime">—</time></div></article>
+ <article class="card alert-card"><h2>Niveau d’alerte</h2><span id="alertBadge" class="badge neutral">INDISPONIBLE</span><p id="alertDescription" class="alert-description">En attente de deux mesures valides.</p></article>
+</section>
+<section class="workspace" aria-label="Historique et commande">
+ <article class="card"><div class="section-head"><div><h2>Historique des mesures</h2><p class="small">Les 50 dernières lectures · mémoire locale à la session</p></div><span class="live-label">● Lecture / 2 s</span></div>
+ <div class="legend"><span><i class="key"></i>Température (°C)</span><span><i class="key humidity"></i>Humidité (%)</span></div>
+ <div class="chart-wrap"><canvas id="historyChart" role="img" aria-label="Historique : température en bleu, humidité en vert, valeurs sur l’axe vertical et heures sur l’axe horizontal."></canvas><div id="chartEmpty">Les courbes apparaîtront dès la première mesure.</div></div><p class="chart-caption">Échelle numérique commune · heures locales · aucune donnée conservée après rechargement</p></article>
+ <article class="card"><h2>Commande LED</h2><p class="small">Actionneur distant · Led_1</p><div class="led-row"><div id="ledBulb" class="bulb" aria-hidden="true">◉</div><div id="ledState" class="led-state">—<span>État inconnu</span></div></div>
+ <button id="ledToggle" type="button" disabled>État LED indisponible</button><p id="ledFeedback" role="status">La commande sera disponible après une lecture valide.</p><hr class="separator"><div class="device-meta"><span>Capteur → base</span><strong>5 secondes</strong><span>LED ← base</span><strong>2 secondes</strong><span>Connexion</span><strong>Firebase REST</strong></div></article>
+</section>
+<section id="watchdog" class="watchdog" aria-label="Surveillance des valeurs"><span class="watch-icon" aria-hidden="true">◷</span><div><h2 id="watchTitle">Surveillance en attente</h2><p id="watchMessage">Le suivi commence à la réception de mesures valides.</p></div></section>
+<footer class="footer"><span>ESP32 + DHT22 · Firebase Realtime Database</span><span>Seuils stricts &gt; · HIGH : 60 °C / 80 % · MEDIUM : 40 °C / 70 %<br>Base publique : démonstration pédagogique, sans authentification.</span></footer>
+</main>
+<script>
+// URL unique de la base Firebase publique ; aucune clé ni authentification.
+const DB_URL = 'https://esp32-iot-tp-default-rtdb.europe-west1.firebasedatabase.app';
+const $ = id => document.getElementById(id);
+const points = [];
+let led = null, busy = false, writing = false, connected = false;
+let lastChangeAt = null, previousValues = null;
+const numberFormat = new Intl.NumberFormat('fr-FR', {maximumFractionDigits: 2});
+const validNumber = value => typeof value === 'number' && Number.isFinite(value);
+
+// Formate une heure locale lisible dans les cartes et sur le graphique.
+function timeLabel(timestamp) {
+ return new Date(timestamp).toLocaleTimeString('fr-FR', {hour12: false});
+}
+
+// Applique les seuils stricts ; HIGH est toujours prioritaire sur MEDIUM.
+function alertLevel(temperature, humidity) {
+ if (!validNumber(temperature) || !validNumber(humidity)) return 'INDISPONIBLE';
+ if (temperature > 60 || humidity > 80) return 'HIGH';
+ if (temperature > 40 || humidity > 70) return 'MEDIUM';
+ return 'LOW';
+}
+
+// Affiche le résultat de la lecture, sans confondre réseau et activité ESP32.
+function setConnection(ok, message) {
+ connected = ok;
+ $('connectionBadge').textContent = ok ? 'CONNECTÉ' : 'ERREUR';
+ $('connectionBadge').className = 'badge ' + (ok ? 'low' : 'high');
+ $('connectionMessage').textContent = message;
+ renderLed();
+ renderWatchdog();
+}
+
+// Limite chaque requête à 8 secondes et rend les erreurs compréhensibles.
+async function request(path = '', options = {}) {
+ const controller = new AbortController();
+ const timer = setTimeout(() => controller.abort(), 8000);
+ try {
+  const response = await fetch(DB_URL + '/' + path + '.json', {
+   ...options, cache: 'no-store', signal: controller.signal
+  });
+  if (!response.ok) throw new Error('Firebase a répondu HTTP ' + response.status + '.');
+  return await response.json();
+ } catch (error) {
+  if (error.name === 'AbortError') throw new Error('Lecture ou écriture trop longue (8 s).');
+  if (error instanceof TypeError) throw new Error('Réseau inaccessible. Vérifiez Internet et les règles Firebase.');
+  throw error;
+ } finally { clearTimeout(timer); }
+}
+
+// Met à jour les mesures ; null et les champs absents ne deviennent jamais zéro.
+function applyData(data) {
+ const object = data && typeof data === 'object' && !Array.isArray(data) ? data : {};
+ const temperature = object.temperature, humidity = object.humidity;
+ const now = Date.now();
+ for (const [key, value] of [['temperature', temperature], ['humidity', humidity]]) {
+  $(key).textContent = validNumber(value) ? numberFormat.format(value) : '—';
+  $(key + 'Time').textContent = validNumber(value) ? timeLabel(now) : 'Indisponible';
+ }
+ led = typeof object.Led_1 === 'boolean' ? object.Led_1 : null;
+ const level = alertLevel(temperature, humidity);
+ $('alertBadge').textContent = level;
+ $('alertBadge').className = 'badge ' + ({LOW:'low', MEDIUM:'medium', HIGH:'high'}[level] || 'neutral');
+ $('alertDescription').textContent = {
+  LOW:'Conditions normales : température ≤ 40 °C et humidité ≤ 70 %.',
+  MEDIUM:'Seuil de vigilance dépassé : température > 40 °C ou humidité > 70 %.',
+  HIGH:'Seuil élevé dépassé : température > 60 °C ou humidité > 80 %.',
+  INDISPONIBLE:'Deux mesures numériques valides sont nécessaires.'
+ }[level];
+ const sensorsValid = validNumber(temperature) && validNumber(humidity);
+ if (sensorsValid) {
+  if (!previousValues || temperature !== previousValues[0] || humidity !== previousValues[1]) {
+   lastChangeAt = now;
+   previousValues = [temperature, humidity];
+  }
+  points.push({time: now, temperature, humidity});
+  if (points.length > 50) points.shift();
+  drawChart();
+ }
+ const complete = sensorsValid && led !== null;
+ setConnection(complete, complete ? 'Dernière lecture : ' + timeLabel(now) :
+  'Données nulles, absentes ou invalides : temperature, humidity et Led_1 sont requis.');
+}
+
+// Lit la racine toutes les 2 secondes, sans superposer les requêtes.
+async function poll() {
+ if (busy || writing) return;
+ busy = true;
+ try { applyData(await request()); }
+ catch (error) { setConnection(false, error.message); }
+ finally { busy = false; }
+}
+
+// Présente uniquement l’état booléen réellement relu dans la base.
+function renderLed() {
+ $('ledBulb').className = 'bulb' + (led === true ? ' on' : '');
+ $('ledState').replaceChildren(document.createTextNode(led === null ? '—' : led ? 'ON' : 'OFF'));
+ const caption = document.createElement('span');
+ caption.textContent = led === null ? 'État inconnu' : connected ? 'État confirmé en base' : 'Dernier état connu';
+ $('ledState').append(caption);
+ $('ledToggle').disabled = writing || led === null || !connected;
+ $('ledToggle').textContent = writing ? 'Écriture et vérification…' : led === null ?
+  'État LED indisponible' : led ? 'Éteindre · OFF' : 'Allumer · ON';
+}
+
+// Écrit un booléen par PUT puis relit la racine pour confirmer l’état réel.
+async function toggleLed() {
+ if (writing || led === null || !connected) return;
+ if (busy) { $('ledFeedback').textContent = 'Lecture en cours. Réessayez dans un instant.'; return; }
+ const desired = !led;
+ writing = true;
+ renderLed();
+ $('ledFeedback').textContent = 'Envoi de la commande, puis vérification…';
+ try {
+  await request('Led_1', {method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(desired)});
+  applyData(await request());
+  $('ledFeedback').textContent = led === desired ?
+   'État relu et confirmé dans Firebase. Application ESP32 sous environ 2 s.' :
+   'État différent ou indisponible après écriture. L’affichage suit la base.';
+ } catch (error) {
+  setConnection(false, error.message);
+  $('ledFeedback').textContent = 'Commande non confirmée. ' + error.message;
+ } finally { writing = false; renderLed(); }
+}
+
+// Mesure le temps sans nouvelle valeur, pas le temps depuis un envoi ESP32.
+function renderWatchdog() {
+ const seconds = lastChangeAt === null ? null : Math.floor((Date.now() - lastChangeAt) / 1000);
+ const overdue = seconds !== null && seconds > 30;
+ $('watchdog').className = 'watchdog' + (overdue ? ' warning' : '');
+ $('watchTitle').textContent = seconds === null ? 'Surveillance en attente' :
+  overdue ? 'Délai dépassé · aucune nouvelle valeur depuis ' + seconds + ' s' :
+  (connected ? 'Communication active' : 'Communication non confirmée');
+ $('watchMessage').textContent = seconds === null ? 'Le suivi commence à la réception de mesures valides.' :
+  'Données inchangées depuis ' + seconds + ' s. ' +
+  (connected ? 'Communication active avec Firebase. ' : 'Lecture Firebase en erreur. ') +
+  'Des envois ESP32 identiques restent possibles ; ce délai ne prouve pas une panne.';
+}
+
+// Trace deux courbes sur canvas, avec axes, heures et échelle adaptée.
+function drawChart() {
+ const canvas = $('historyChart'), rect = canvas.getBoundingClientRect();
+ const ratio = window.devicePixelRatio || 1;
+ canvas.width = Math.round(rect.width * ratio); canvas.height = Math.round(rect.height * ratio);
+ const ctx = canvas.getContext('2d');
+ ctx.scale(ratio, ratio);
+ const css = getComputedStyle(document.documentElement);
+ const width = rect.width, height = rect.height;
+ const left = 39, top = 15, right = width - 12, bottom = height - 31;
+ const values = points.flatMap(point => [point.temperature, point.humidity]);
+ const min = Math.floor(Math.min(0, ...values) / 10) * 10;
+ const max = Math.ceil(Math.max(100, ...values) / 10) * 10;
+ ctx.font = '10px system-ui'; ctx.lineWidth = 1;
+ for (let i = 0; i <= 4; i++) {
+  const y = top + (bottom - top) * i / 4;
+  ctx.strokeStyle = css.getPropertyValue('--line');
+  ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+  ctx.fillStyle = css.getPropertyValue('--muted'); ctx.textAlign = 'right';
+  ctx.fillText(numberFormat.format(max - (max - min) * i / 4), left - 8, y + 3);
+ }
+ ctx.strokeStyle = css.getPropertyValue('--line');
+ ctx.beginPath(); ctx.moveTo(left, top); ctx.lineTo(left, bottom); ctx.lineTo(right, bottom); ctx.stroke();
+ $('chartEmpty').hidden = points.length > 0;
+ if (!points.length) return;
+ const x = i => left + (right - left) * i / Math.max(1, points.length - 1);
+ const y = value => bottom - (value - min) / (max - min) * (bottom - top);
+ for (const [key, color] of [['temperature','--blue'], ['humidity','--teal']]) {
+  ctx.strokeStyle = ctx.fillStyle = css.getPropertyValue(color); ctx.lineWidth = 2.3;
+  ctx.beginPath();
+  points.forEach((point, i) => i ? ctx.lineTo(x(i), y(point[key])) : ctx.moveTo(x(i), y(point[key])));
+  ctx.stroke();
+  const last = points.length - 1;
+  ctx.beginPath(); ctx.arc(x(last), y(points[last][key]), 3, 0, Math.PI * 2); ctx.fill();
+ }
+ ctx.fillStyle = css.getPropertyValue('--muted');
+ const indices = [...new Set([0, Math.floor((points.length - 1) / 2), points.length - 1])];
+ indices.forEach(i => {
+  ctx.textAlign = i === 0 ? 'left' : i === points.length - 1 ? 'right' : 'center';
+  ctx.fillText(timeLabel(points[i].time), x(i), height - 8);
+ });
+}
+
+// Branche les événements et lance les lectures automatiques dès l’ouverture.
+$('ledToggle').addEventListener('click', toggleLed);
+window.addEventListener('resize', drawChart);
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawChart);
+drawChart(); poll();
+setInterval(poll, 2000);
+setInterval(renderWatchdog, 1000);
+</script>
+</body>
+</html>
